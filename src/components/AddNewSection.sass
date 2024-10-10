@@ -1,0 +1,46 @@
+@import "colors.sass"
+
+.AddNewSection
+  height: 80px
+  margin: 20px 10px 60px 10px
+  background-color: $lightGrey
+  border-radius: 40px
+  border: 1px solid $grey
+  padding: 0 30px
+  display: flex
+  align-items: center
+  justify-content: space-between
+
+  @media (max-width: 800px)
+    height: unset
+    flex-direction: column
+    justify-content: center
+    padding: 20px 30px
+
+    button
+      margin-top: 20px
+
+
+  .inputs-container
+    display: flex
+    width: 600px
+    justify-content: space-between
+
+    input
+      border: 1px solid $grey
+      background-color: $white
+      padding: 20px
+      border-radius: 25px
+      height: 50px
+      width: 280px
+
+      &:focus
+        outline: 1px solid $primary
+
+    @media (max-width: 800px)
+      flex-direction: column
+      width: 100%
+
+      input
+        width: 100%
+        margin: 10px 0
