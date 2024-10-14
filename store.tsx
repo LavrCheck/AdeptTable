@@ -4,9 +4,6 @@ import {companies} from "./companies";
 
 const initialState: CompanyState = {
     companies: companies,
-    visibleCompanies: companies.slice(0, 50),
-    currentPage: 1,
-    itemsPerPage: 50
 };
 
 const companySlice = createSlice({
@@ -15,37 +12,18 @@ const companySlice = createSlice({
     reducers: {
         addCompany(state, action: PayloadAction<Company>) {
             state.companies.unshift(action.payload);
-            state.visibleCompanies.unshift(action.payload);
         },
-        loadMoreCompanies(state) {
-            const start = state.currentPage * state.itemsPerPage
-            if (start >= state.companies.length) {
-                return
-            }
-            const newVisibleCompanies = state.companies.slice(start, start + state.itemsPerPage)
-            state.visibleCompanies.push(...newVisibleCompanies)
-            state.currentPage += 1
-        },
-        removeCompanies(state, action: PayloadAction<string[]>) {
-            state.companies = state.companies.filter(company => !action.payload.includes(company.id))
-            state.visibleCompanies = state.visibleCompanies.filter(company => !action.payload.includes(company.id))
+        removeCompanies(state) {
+            state.companies = state.companies.filter(company => !company.isSelected)
         },
         toggleSelectCompany(state, action: PayloadAction<string>) {
             const company = state.companies.find(c => c.id === action.payload)
             if (company) {
                 company.isSelected = !company.isSelected
             }
-
-            const visibleCompany = state.visibleCompanies.find(c => c.id === action.payload);
-            if (visibleCompany) {
-                visibleCompany.isSelected = !visibleCompany.isSelected
-            }
         },
         toggleSelectAll(state, action: PayloadAction<boolean>) {
             state.companies.forEach(company => {
-                company.isSelected = action.payload
-            })
-            state.visibleCompanies.forEach(company => {
                 company.isSelected = action.payload
             })
         },
@@ -54,20 +32,11 @@ const companySlice = createSlice({
             if (company) {
                 company.name = action.payload.newName
             }
-            const visibleCompany = state.visibleCompanies.find(c => c.id === action.payload.id)
-            if (visibleCompany) {
-                visibleCompany.name = action.payload.newName
-            }
         },
         updateCompanyAddress(state, action: PayloadAction<{ id: string; newAddress: string }>) {
             const company = state.companies.find(c => c.id === action.payload.id)
             if (company) {
                 company.address = action.payload.newAddress
-            }
-
-            const visibleCompany = state.visibleCompanies.find(c => c.id === action.payload.id)
-            if (visibleCompany) {
-                visibleCompany.address = action.payload.newAddress
             }
         },
     },
@@ -76,15 +45,7 @@ const companySlice = createSlice({
 const localStorageMiddleware: Middleware<{}, RootState> = store => next => action => {
     const result = next(action)
     const state = store.getState()
-    localStorage.setItem('companyState', JSON.stringify({
-        company: {
-            companies: state.company.companies,
-            visibleCompanies: state.company.companies.slice(0, 50),
-            currentPage: 1,
-            itemsPerPage: 50
-        }
-
-    }))
+    localStorage.setItem('companyState', JSON.stringify(state))
     return result
 };
 

@@ -7,24 +7,24 @@ import {actions} from "../../store.tsx";
 
 export const Tr = (
     {
-        visibleCompany
+        company
     }: {
-        visibleCompany: Company
+        company: Company
     }
 ) => {
 
-    const [companyName, setCompanyName] = useState<string>(visibleCompany.name)
-    const [address, setAddress] = useState<string>(visibleCompany.address)
+    const [companyName, setCompanyName] = useState<string>(company.name)
+    const [address, setAddress] = useState<string>(company.address)
 
     const dispatch = useDispatch()
 
     return <>
-        <tr className={`Tr ${visibleCompany.isSelected ? 'selected' : ''}`}>
+        <tr className={`Tr ${company.isSelected ? 'selected' : ''}`}>
             <td style={{width: '4em'}}>
                 <Checkbox
-                    id={visibleCompany.id}
-                    checked={visibleCompany.isSelected}
-                    onChange={() => dispatch(actions.toggleSelectCompany(visibleCompany.id))}
+                    id={company.id}
+                    checked={company.isSelected}
+                    onChange={() => dispatch(actions.toggleSelectCompany(company.id))}
                 />
             </td>
             <td>
@@ -38,10 +38,10 @@ export const Tr = (
                     }}
                     onBlur={() => {
                         if (companyName === '') {
-                            setCompanyName(visibleCompany.name)
+                            setCompanyName(company.name)
                             return
                         }
-                        dispatch(actions.updateCompanyName({id: visibleCompany.id, newName: companyName}))
+                        dispatch(actions.updateCompanyName({id: company.id, newName: companyName}))
                     }}
                 />
             </td>
@@ -56,10 +56,10 @@ export const Tr = (
                     }}
                     onBlur={() => {
                         if (address === '') {
-                            setAddress(visibleCompany.address)
+                            setAddress(company.address)
                             return
                         }
-                        dispatch(actions.updateCompanyAddress({id: visibleCompany.id, newAddress: address}))
+                        dispatch(actions.updateCompanyAddress({id: company.id, newAddress: address}))
                     }}
                 />
             </td>

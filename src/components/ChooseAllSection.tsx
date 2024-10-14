@@ -2,27 +2,19 @@ import './ChooseAllSection.sass'
 import {Checkbox} from "./Checkbox.tsx";
 import {v4 as uuidv4} from 'uuid'
 import {Button} from "./Button.tsx";
-import {Company, RootState} from "../../types.tsx";
-import {connect, useDispatch} from "react-redux";
+import {RootState} from "../../types.tsx";
+import {useDispatch, useSelector} from "react-redux";
 import {actions} from "../../store.tsx";
 
-const mapStateToProps = (state: RootState) => ({
-    companies: state.company.companies,
-    visibleCompanies: state.company.visibleCompanies,
-});
 
-
-const ChooseAllSection = (
-    {
-        companies,
-        visibleCompanies
-    }: {
-        companies: Company []
-        visibleCompanies: Company []
-    }
-) => {
+export const ChooseAllSection = () => {
 
     const dispatch = useDispatch()
+
+    const selected: any = useSelector((state: RootState) => ({
+        isAll: state.company.companies.every(c => c.isSelected),
+        count: state.company.companies.filter(x => x.isSelected).length
+    }))
 
     return <>
         <div className={'ChooseAllSection'}>
@@ -30,27 +22,21 @@ const ChooseAllSection = (
                 <span>Выбрать все</span>
                 <Checkbox
                     id={uuidv4()}
-                    checked={visibleCompanies.every(c => c.isSelected)}
+                    checked={selected.isAll}
                     onChange={() => {
-                        dispatch(actions.toggleSelectAll(
-                            !visibleCompanies.every(c => c.isSelected)
-                        ))
+                        dispatch(actions.toggleSelectAll(!selected.isAll))
                     }}
                 />
             </div>
             <div>
                 <Button
                     label={'Удалить'}
-                    count={companies.filter(x => x.isSelected).length}
+                    count={selected.count}
                     onClick={() => {
-                        dispatch(actions.removeCompanies(
-                            companies.filter(x => x.isSelected).map(x => x.id)
-                        ))
+                        dispatch(actions.removeCompanies())
                     }}
                 />
             </div>
         </div>
     </>
 }
-
-export default connect(mapStateToProps)(ChooseAllSection)
