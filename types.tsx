@@ -12,8 +12,3 @@ export type CompanyState = {
 export type RootState  = {
     company: CompanyState
 }
-
-export type VisibleCompanies = {
-    currentPage: number,
-    visibleCompanies: Company[]
-}

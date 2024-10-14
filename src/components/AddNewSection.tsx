@@ -24,7 +24,6 @@ export const AddNewSection = () => {
                         }
                     }}
                     placeholder={'Название'}
-
                 />
                 <input
                     value={address}

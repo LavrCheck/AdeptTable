@@ -1,44 +1,35 @@
 import './Table.sass'
-import {Company, RootState, VisibleCompanies} from "../../types.tsx";
+import {Company, RootState} from "../../types.tsx";
 import {Tr} from "./Tr.tsx";
 import {ChooseAllSection} from "./ChooseAllSection.tsx";
 import {useSelector} from "react-redux";
 import {useEffect, useState} from "react";
 
+const itemsPerPage: number = 50
+
+
 export const Table = () => {
 
     const companies: Company[] = useSelector((state: RootState) => state.company.companies)
 
-    const [visibleCompanies, setVisibleCompanies] = useState<VisibleCompanies>({
-        currentPage: 1,
-        visibleCompanies: companies.slice(0, 50)
-    });
+    const [offset, setOffset] = useState<number>(0)
+
+    const handleScroll = () => {
+        const bottom: boolean = window.innerHeight + window.pageYOffset + 200 >= document.documentElement.scrollHeight
+        if (bottom) {
+            setOffset(prevState => (prevState + itemsPerPage))
+        }
+    }
 
     useEffect(() => {
         window.addEventListener('scroll', handleScroll)
         return () => window.removeEventListener('scroll', handleScroll)
-    }, []);
+    }, [])
 
-    useEffect(() => {
-        const itemsPerPage: number = 50
-        setVisibleCompanies((prevState) => ({
-            currentPage: prevState.currentPage,
-            visibleCompanies: companies.slice(0, prevState.currentPage * itemsPerPage)
-        }))
-    }, [companies]);
 
-    const handleScroll = () => {
-        const bottom: boolean = window.innerHeight + window.pageYOffset + 200 >= document.documentElement.scrollHeight
-        const itemsPerPage: number = 50
-        if (bottom) {
-            setVisibleCompanies(prevState => ({
-                currentPage: prevState.currentPage + 1,
-                visibleCompanies: companies.slice(0, prevState.currentPage * itemsPerPage)
-            }))
-        }
+    if (companies.length === 0) {
+        return <></>
     }
-
-    if (companies.length === 0) {return <></>}
 
     return <>
         <table className="Table">
@@ -55,7 +46,7 @@ export const Table = () => {
             </tr>
             </thead>
             <tbody>
-            {visibleCompanies.visibleCompanies.map((company: Company) => (
+            {companies.slice(0, offset + itemsPerPage).map((company: Company) => (
                 <Tr key={company.id} company={company}></Tr>
             ))}
             </tbody>
